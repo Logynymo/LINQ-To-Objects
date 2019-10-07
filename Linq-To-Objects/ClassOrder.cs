@@ -147,7 +147,7 @@ namespace Linq_To_Objects
             }
         }
 
-        [Column(Storage = "_ShipAddress")]
+        [Column(Storage = "_ShipAddress")] 
         public string ShipAddress
         {
             get { return _ShipAddress; }

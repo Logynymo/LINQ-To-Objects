@@ -89,8 +89,5 @@ namespace Linq_To_Objects
                 }
             }
         }
-
-
-
     }
 }
