@@ -1,10 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Data;
 using System.Data.Linq;
+using System.Linq;
+using System.Data.Linq.Mapping;
 
 namespace Linq_To_Objects
 {
@@ -12,7 +11,7 @@ namespace Linq_To_Objects
     {
         static void Main(string[] args)
         {
-            List<int> numbers = new List<int>() { -5 , -4 , -3 , -2 , -1 , 0 , 1 , 2 , 3 , 4 , 5 , 100 , 200 , 300 , -1000, 1,2,3,4,5 };
+            List<int> numbers = new List<int>() { -5, -4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 100, 200, 300, -1000, 1, 2, 3, 4, 5 };
             string str = "dsgkælsdkglædskgkkLÆSDKGØÆWSHÆEMRHÆMERÆMJEQÅPDDOSPÅOWLWQWLYKÆH";
             List<string> cities = new List<string>() {"ROME", "LONDON", "NAIROBI", "CALIFORNIA", "ZURICH", "NEW DELHI",
                                                       "AMSTERDAM", "ABU DHABI", "PARIS" };
@@ -23,7 +22,8 @@ namespace Linq_To_Objects
             //PrintWordsAssignment44(cities);
             //PrintUppercaseWords(str0);
             //GetDataFromFilmDB();
-              GetDataFromNorthwindDB();
+            //GetDataFromNorthwindDB();
+            GetDataFromTwoTablesInNorthwind();
 
 
 
@@ -49,7 +49,7 @@ namespace Linq_To_Objects
             var res = from n in numbers
                       group n by n into nrcount
                       select new { nrcount.Key, numcount = nrcount.Count() };
-            
+
             numbers.Sort();
             Console.WriteLine("\n");
             foreach (var n in numbers.GroupBy(n => n))
@@ -66,8 +66,8 @@ namespace Linq_To_Objects
         private static void WordOrcurrence(string str)
         {
             var res = from s in str
-                         group s by s into wdcount
-                         select new { wdcount.Key, wordcount = wdcount.Count() };
+                      group s by s into wdcount
+                      select new { wdcount.Key, wordcount = wdcount.Count() };
 
             foreach (var strr in res)
             {
@@ -106,7 +106,7 @@ namespace Linq_To_Objects
         }
         private static void GetDataFromFilmDB()
         {
-            using (DataContext db = new DataContext("Server=10.205.48.42,49172;Database=Film;User Id=AspIT;Password=Server2012") )
+            using (DataContext db = new DataContext("Server=10.205.48.42,49172;Database=Film;User Id=AspIT;Password=Server2012"))
             {
                 Table<ClassFilm> Films = db.GetTable<ClassFilm>();
                 IQueryable<ClassFilm> custQueryNew = Films.Where(x => x.filmid > 0);
@@ -140,6 +140,17 @@ namespace Linq_To_Objects
                 foreach (ClassCustomer nf in custQueryNew)
                 {
                     Console.WriteLine($"{nf.Address},{nf.City},{nf.CompanyName},{nf.ContactName},{nf.ContactTitle},{nf.Country},{nf.CustomerID},{nf.Fax},{nf.Phone},{nf.PostalCode},{nf.Region}");
+                }
+            }
+        }
+        private static void GetDataFromTwoTablesInNorthwind()
+        {
+            using (DataContext db = new DataContext("Server=10.205.48.42,49172;Database=Northwind;User Id=AspIT;Password=Server2012"))
+            {
+                IQueryable<ClassCustomer> CustomersNew = db.GetTable<ClassCustomer>().Where(x => x.Orders.Any()).Where(x => x.Country == "Denmark");
+                foreach (var custObj in CustomersNew)
+                {
+                    Console.WriteLine($"ID: {custObj.CustomerID} - Name: {custObj.CompanyName} - Qty: {custObj.Orders.Count()} - Country: {custObj.Country}");
                 }
             }
         }

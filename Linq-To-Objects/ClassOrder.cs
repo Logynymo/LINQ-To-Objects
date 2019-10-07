@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.Linq;
 using System.Data.Linq.Mapping;
 using System.Linq;
 using System.Text;
@@ -7,15 +8,17 @@ using System.Threading.Tasks;
 
 namespace Linq_To_Objects
 {
-    [Table(Name = "Order")]
-    class ClassOrder
+    [Table(Name = "Orders")]
+    public class ClassOrder
     {
+        private EntityRef<ClassCustomer> _Customer;
+
         private int _OrderID;
         private string _CustomerID;
         private int _EmployeeID;
-        private DateTime _OrderDate;
-        private DateTime _RequiredDate;
-        private DateTime _ShippedDate;
+        private DateTime? _OrderDate;
+        private DateTime? _RequiredDate;
+        private DateTime? _ShippedDate;
         private int _ShipVia;
         private double _Freight;
         private string _ShipName;
@@ -27,20 +30,16 @@ namespace Linq_To_Objects
 
         public ClassOrder()
         {
-            
+            this._Customer = new EntityRef<ClassCustomer>();
+            //OrderID = 0;
         }
 
-        [Column(IsPrimaryKey = true, Storage = "_OrderID")]
+        [Column(IsPrimaryKey = true, Storage = "_OrderID", 
+            DbType = "int NOT NULL IDENTITY", IsDbGenerated = true)]
         public int OrderID
         {
             get { return _OrderID; }
-            set
-            {
-                if (_OrderID != value)
-                {
-                    _OrderID = value;
-                }
-            }
+            
         }
 
         [Column(Storage = "_CustomerID", DbType = "NChar(5)")]
@@ -55,8 +54,14 @@ namespace Linq_To_Objects
                 }
             }
         }
+        [Association(Storage = "_Customer", ThisKey = "CustomerID")]
+        public ClassCustomer Customer
+        {
+            get { return this._Customer.Entity; }
+            set { this._Customer.Entity = value; }
+        }
 
-        [Column(Storage = "_EmployeeID")]
+        [Column(Storage = "_EmployeeID", DbType = "int")]
         public int EmployeeID
         {
             get { return _EmployeeID; }
@@ -69,10 +74,10 @@ namespace Linq_To_Objects
             }
         }
 
-        [Column(Storage = "_OrderDate")]
-        public DateTime OrderDate
+        [Column(Storage = "_OrderDate", DbType = "datetime")]
+        public DateTime? OrderDate
         {
-            get { return _OrderDate; }
+            get { return _OrderDate.GetValueOrDefault(DateTime.Now); }
             set
             {
                 if (_OrderDate != value)
@@ -82,10 +87,10 @@ namespace Linq_To_Objects
             }
         }
 
-        [Column(Storage = "_RequiredDate")]
-        public DateTime RequiredDate
+        [Column(Storage = "_RequiredDate", DbType = "datetime")]
+        public DateTime? RequiredDate
         {
-            get { return _RequiredDate; }
+            get { return _RequiredDate.GetValueOrDefault(); }
             set
             {
                 if (_RequiredDate != value)
@@ -95,10 +100,10 @@ namespace Linq_To_Objects
             }
         }
 
-        [Column(Storage = "_ShippedDate")]
-        public DateTime ShippedDate
+        [Column(Storage = "_ShippedDate", DbType = "datetime")]
+        public DateTime? ShippedDate
         {
-            get { return _ShippedDate; }
+            get { return _ShippedDate.GetValueOrDefault(); }
             set
             {
                 if (_ShippedDate != value)
@@ -108,7 +113,7 @@ namespace Linq_To_Objects
             }
         }
 
-        [Column(Storage = "_ShipVia")]
+        [Column(Storage = "_ShipVia", DbType = "int")]
         public int ShipVia
         {
             get { return _ShipVia; }
@@ -134,7 +139,7 @@ namespace Linq_To_Objects
             }
         }
 
-        [Column(Storage = "_ShipName")]
+        [Column(Storage = "_ShipName", DbType = "nvarchar(40)")]
         public string ShipName
         {
             get { return _ShipName; }
@@ -147,7 +152,7 @@ namespace Linq_To_Objects
             }
         }
 
-        [Column(Storage = "_ShipAddress")] 
+        [Column(Storage = "_ShipAddress", DbType = "nvarchar(60)")] 
         public string ShipAddress
         {
             get { return _ShipAddress; }
@@ -160,7 +165,7 @@ namespace Linq_To_Objects
             }
         }
 
-        [Column(Storage = "_ShipCity")]
+        [Column(Storage = "_ShipCity", DbType = "nvarchar(15)")]
         public string ShipCity
         {
             get { return _ShipCity; }
@@ -173,7 +178,7 @@ namespace Linq_To_Objects
             }
         }
 
-        [Column(Storage = "_ShipRegion")]
+        [Column(Storage = "_ShipRegion", DbType = "nvarchar(15)")]
         public string ShipRegion
         {
             get { return _ShipRegion; }
@@ -186,7 +191,7 @@ namespace Linq_To_Objects
             }
         }
 
-        [Column(Storage = "_ShipPostalCode")]
+        [Column(Storage = "_ShipPostalCode", DbType = "nvarchar(10)")]
         public string ShipPostalCode
         {
             get { return _ShipPostalCode; }
@@ -199,7 +204,7 @@ namespace Linq_To_Objects
             }
         }
 
-        [Column(Storage = "ShipCountry")]
+        [Column(Storage = "_ShipCountry", DbType = "nvarchar(15)")]
         public string ShipCountry
         {
             get { return _ShipCountry; }

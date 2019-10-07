@@ -19,8 +19,18 @@ namespace Linq_To_Objects
 
         public ClassCustomer()
         {
-            
+            this._Orders = new EntitySet<ClassOrder>();
         }
+
+        private EntitySet<ClassOrder> _Orders;
+        [Association(Storage = "_Orders", OtherKey = "CustomerID")]
+
+        public EntitySet<ClassOrder> Orders
+        {
+            get { return this._Orders; }
+            set { this._Orders.Assign(value); }
+        }
+
 
         [Column(IsPrimaryKey = true, Storage = "_CustomerID", DbType = "NChar(5)")]
         public string CustomerID
